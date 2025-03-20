@@ -37,7 +37,7 @@ class Vec3
 
     // Scale this vector by the number scalar and return the result
     scale(scalar){
-        return new Vec3(this.x * scaler, this.y * scaler, this.z * scaler);
+        return new Vec3(this.x * scalar, this.y * scalar, this.z * scalar);
     }
     
     // Calculate the dot product of this vector with the other and return the result
@@ -77,7 +77,18 @@ class Sphere
     // a quadratic equation and return the t value of the ray for that point
     // If two solutions exist return the minus solution
     // If no solutions exist return -1
-    rayIntersects(ray)  {}
+    rayIntersects(ray)  {
+        let a = (this.direction * this.direction);
+        let b = 2 * this.direction * (this.origin - this.centre); 
+        let c = (this.origin - this.centre) * (this.origin - this.centre) - (this.radius * this.radius);
+
+        let x = (-b + Math.sqrt((b * b) - 4*(a + c))) / (2*a);
+
+        if(b*b - 4*(a+c) < 0){
+            return -1   
+        }
+        else return x; 
+    }
 }
 
 // Ray which has an origin and direction, both are Vec3s
@@ -116,8 +127,13 @@ class RayCastResult
 }
 
 // Calculate the intersection point and normal when a ray hits a sphere. Returns a RayCastResult.
-function hit(ray, t, sphereIndex) {
-    return new RayCastResult(intersectionPoint, intersectionNormal, t, sphereIndex)
+function hit(ray, t, sphereIndex) 
+{
+    let sphere = spheres[sphereIndex];
+    let intersectionPoint = (this.origin + this.direction * t);
+    let intersectionNormal = (intersectionPoint / sphere.centre);
+
+    return new RayCastResult(intersectionPoint, intersectionNormal, t, sphereIndex);
 }
 
 // Return a RayCastResult when a ray misses everything in the scene
@@ -129,8 +145,8 @@ function miss()
 // Check whether a ray hits anything in the scene and return a RayCast Result
 function traceRay(ray)
 {
-    let t = 1000000
-    let closestSphereIndex = -1
+    let t = 1000000;
+    let closestSphereIndex = -1;
     
     for (let i = 0; i < spheres.length; i++)
     {
@@ -266,7 +282,7 @@ for (let i = 0; i < imageWidth; i++)
         let u = i / (imageWidth-1)
         let v = j / (imageHeight-1)
 
-        let ray = new Ray(camPosition, lowerLeftCorner.add(horizontal.scale(u)).add(vetical.scale(v)).minus(camPosition))
+        let ray = new Ray(camPosition, lowerLeftCorner.add(horizontal.scale(u)).add(vertical.scale(v)).minus(camPosition))
         colour = rayColour(ray).scale(255)
         setPixel(i,j,colour)
     }
