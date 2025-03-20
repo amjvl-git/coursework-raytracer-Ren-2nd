@@ -130,9 +130,9 @@ class RayCastResult
 function hit(ray, t, sphereIndex) 
 {
     let sphere = spheres[sphereIndex];
-    let intersectionPoint = (this.origin + this.direction * t);
-    let intersectionNormal = (intersectionPoint / sphere.centre);
-
+    let intersectionPoint = ray.origin + (ray.direction  * t); 
+    let intersectionNormal = (intersectionPoint * sphere.center); 
+    
     return new RayCastResult(intersectionPoint, intersectionNormal, t, sphereIndex);
 }
 
